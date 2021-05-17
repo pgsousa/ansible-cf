@@ -1,0 +1,13 @@
+heat_template_version: 2015-04-30
+
+description: Simple template to deploy a single compute instance
+
+resources:
+  {{ vm_name }}:
+    type: OS::Nova::Server
+    properties:
+      key_name: {{ ssh_key_name }}
+      image: {{ heat_image }}
+      flavor: {{ heat_flavor }}
+      networks:
+        - network: {{ net_id }}

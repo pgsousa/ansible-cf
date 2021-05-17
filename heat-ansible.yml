@@ -1,0 +1,40 @@
+---
+- name: '[HEAT-ANSIBLE][HEAT-CREATE] Heat Creation'
+  hosts: all
+  remote_user: root
+  vars:
+    auth_v3:
+      OS_USERNAME: "{{ ADMIN_USER }}"
+      OS_PASSWORD: "{{ OSP_PASS }}"
+      OS_AUTH_URL: "http://{{ KEYSTONE_ENDPOINT }}:{{ KEYSTONE_ADMIN_PORT }}/v3/"
+      OS_IDENTITY_API_VERSION: "3"
+      OS_PROJECT_NAME: "admin"
+      OS_PROJECT_DOMAIN_NAME: "Default"
+      OS_USER_DOMAIN_NAME: "Default"
+      OS_REGION_NAME: "RegionOne"
+  vars_files:
+    - "vault/vault.yml"
+  roles:
+    - { role: heat-ansible }
+      
+# For working from Tower, an tweak must to be executed
+# https://docs.ansible.com/ansible-tower/latest/html/userguide/security.html#bubblewrap-functionality-and-variables
+# The primary file you may want to add to AWX_PROOT_SHOW_PATHS is /var/lib/awx/.ssh, if your playbooks need to use keys or settings defined there.
+# Put the path /var/lib/awx/.ssh into the PATH_TO_EXPOSE_TO_ISOLATED_JOBS and restart the tower with ansible-tower-service restart
+
+- name: '[HEAT-ANSIBLE][CONFIG-VM] Configure VM created before'
+  hosts: inv
+  remote_user: cloud-user
+  vars_files: 
+    - "vault/vault.yml"
+  tasks:
+    - include: roles/heat-ansible/tasks/config_stack.yml
+
+
+
+
+
+
+
+
+

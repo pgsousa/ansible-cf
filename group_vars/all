@@ -1,0 +1,26 @@
+# Openstack Auth Params
+ADMIN_USER: "admin"
+ADMIN_TENANT_NAME: "admin"
+OS_IDENTITY_API_VERSION: "3"
+#KEYSTONE_ENDPOINT: "osp.example.com"
+KEYSTONE_ENDPOINT: "192.168.0.20"
+KEYSTONE_ADMIN_PORT: "35357"
+project: "admin"
+
+ssh_key_name: "test-key"
+keypair_dir: "/var/lib/awx"
+keypair_file: "{{ keypair_dir }}/id_rsa"
+
+# Heat Template Params
+code_dest_dir: "/tmp/ansible-cf"
+heat_image: "rhel7.2"
+heat_flavor: "m1.small"
+heat_template: "template2.yml.j2"
+stack_tag: "osp"
+stack_name: "test-stack"
+vm_name: instance1
+
+# TODO: dynamic get the network
+net_id: ea3e0dae-85a0-4ab9-94f5-7d05fbfdb0d0
+net_name: private
+fip_pool: public

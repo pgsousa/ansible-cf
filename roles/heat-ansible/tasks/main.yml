@@ -1,0 +1,37 @@
+---
+# tasks file for heat-ansible
+
+- include: pre_stack.yml
+
+- include: create_stack.yml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

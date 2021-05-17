@@ -1,0 +1,52 @@
+---
+
+- name: '[HEAT-ANSIBLE] Create the directory for ansible-cf code'
+  delegate_to: localhost
+  file: 
+    path: "{{ code_dest_dir }}"    
+    state: directory
+    mode: 0755
+ 
+- name: '[HEAT-ANSIBLE] Create the Heat Orchestration Template rendered'
+  delegate_to: localhost
+  template:
+    src: "{{ heat_template }}"
+    dest: "{{ code_dest_dir }}/{{ heat_template }}"
+    mode: 0644
+
+- name: '[HEAT-ANSIBLE] Create Stack' 
+  delegate_to: localhost
+  environment: "{{ auth_v3 }}"
+  os_stack: 
+    name: "{{ stack_name }}"
+    state: present
+    template: "{{ code_dest_dir }}/{{ heat_template }}"
+  register: stack_create
+
+- name: '[HEAT-ANSIBLE] Get VM info about heat-stack'
+  environment: "{{ auth_v3 }}"
+  shell: "heat resource-list {{ stack_name }} | grep Server | awk '{ print $4 }'"
+  register: server_list
+
+- name: 'Debug'
+  debug: 
+    msg: "{{ server_list }}"
+
+- name: '[HEAT-ANSIBLE] set ansible_python_interpreter'
+  set_fact: ansible_python_interpreter="/root/shade/bin/python"
+
+- name: '[HEAT-ANSIBLE] Check VMs'
+  delegate_to: localhost
+  environment: "{{ auth_v3 }}"
+  os_server_facts: 
+    server: "{{ item }}"
+  with_items: "{{ server_list.stdout }}"  
+
+- name: '[HEAT-ANSIBLE] Give me the IP from the VM'
+  debug:
+    msg: "{{ openstack_servers[0].public_v4 }}"
+
+- add_host:
+    groups: inv
+    hostname: "{{ openstack_servers[0].public_v4 }}"
+    #ansible_ssh_private_key_file: "{{ keypair_file }}"
